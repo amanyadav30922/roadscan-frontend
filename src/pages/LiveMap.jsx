@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
+import MarkerClusterGroup from 'react-leaflet-cluster'
 import { MapContainer, TileLayer, CircleMarker, Popup, useMap } from 'react-leaflet'
 import axios from 'axios'
+import L from 'leaflet'
 import { MapPin, AlertTriangle, Navigation, Layers, Map as MapIcon, Search, X } from 'lucide-react'
 import 'leaflet/dist/leaflet.css'
 
@@ -423,34 +425,58 @@ export default function LiveMap() {
             {/* Fly to searched location */}
             <FlyTo target={searchTarget} />
 
-            {/* Dots mode */}
-            {viewMode === 'dots' && filtered.map((d, i) => (
-              <CircleMarker
-                key={i}
-                center={[d.lat, d.lon]}
-                radius={d.severity === 'High' ? 10 : d.severity === 'Medium' ? 8 : 6}
-                fillColor={COLORS[d.severity]}
-                color={'#ffffff'}
-                fillOpacity={0.9}
-                weight={2}
-                eventHandlers={{ click: () => setSelected(d) }}
-              >
-                <Popup>
-                  <div style={{ fontFamily: 'Poppins, sans-serif', minWidth: '160px', padding: '4px' }}>
-                    <div style={{ fontWeight: '600', fontSize: '13px', color: '#111827', marginBottom: '6px' }}>
-                      📍 {d.city}
-                    </div>
-                    <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '3px' }}>
-                      Potholes: <strong style={{ color: '#111827' }}>{d.potholes}</strong>
-                    </div>
-                    <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '3px' }}>
-                      Severity: <strong style={{ color: COLORS[d.severity] }}>{d.severity}</strong>
-                    </div>
-                    <div style={{ fontSize: '11px', color: '#9ca3af', marginTop: '6px' }}>{d.timestamp}</div>
-                  </div>
-                </Popup>
-              </CircleMarker>
-            ))}
+        {/* Dots mode with clustering */}
+{viewMode === 'dots' && (
+  <MarkerClusterGroup
+    chunkedLoading
+    iconCreateFunction={cluster => {
+      const count = cluster.getChildCount()
+      const size  = count > 50 ? 50 : count > 20 ? 40 : 32
+      const bg    = count > 50 ? '#dc2626' : count > 20 ? '#d97706' : '#0012b5'
+      return L.divIcon({
+        html: `<div style="
+          width:${size}px;height:${size}px;border-radius:50%;
+          background:${bg};color:#fff;
+          display:flex;align-items:center;justify-content:center;
+          font-size:${count > 99 ? 10 : 12}px;font-weight:700;
+          font-family:Poppins,sans-serif;
+          border:3px solid #fff;
+          box-shadow:0 2px 8px rgba(0,0,0,0.2);
+        ">${count}</div>`,
+        className: '',
+        iconSize: [size, size],
+      })
+    }}
+  >
+    {filtered.map((d, i) => (
+      <CircleMarker
+        key={i}
+        center={[d.lat, d.lon]}
+        radius={d.severity === 'High' ? 10 : d.severity === 'Medium' ? 8 : 6}
+        fillColor={COLORS[d.severity]}
+        color={'#ffffff'}
+        fillOpacity={0.9}
+        weight={2}
+        eventHandlers={{ click: () => setSelected(d) }}
+      >
+        <Popup>
+          <div style={{ fontFamily: 'Poppins, sans-serif', minWidth: '160px', padding: '4px' }}>
+            <div style={{ fontWeight: '600', fontSize: '13px', color: '#111827', marginBottom: '6px' }}>
+              📍 {d.city}
+            </div>
+            <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '3px' }}>
+              Potholes: <strong style={{ color: '#111827' }}>{d.potholes}</strong>
+            </div>
+            <div style={{ fontSize: '12px', color: '#6b7280', marginBottom: '3px' }}>
+              Severity: <strong style={{ color: COLORS[d.severity] }}>{d.severity}</strong>
+            </div>
+            <div style={{ fontSize: '11px', color: '#9ca3af', marginTop: '6px' }}>{d.timestamp}</div>
+          </div>
+        </Popup>
+      </CircleMarker>
+    ))}
+  </MarkerClusterGroup>
+)}
 
             {/* Heatmap mode */}
             {viewMode === 'heatmap' && heatPoints.length > 0 && (

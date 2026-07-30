@@ -241,25 +241,27 @@ export default function Dashboard() {
               </button>
             </div>
             <div className="card-body">
-              {cityData.map((c, i) => (
-                <div key={c.city} style={{ marginBottom: '12px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
-                      <span style={{
-                        width: '18px', height: '18px', borderRadius: '5px',
-                        background: '#eff6ff', color: '#0012b5',
-                        fontSize: '10px', fontWeight: '700',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center'
-                      }}>{i + 1}</span>
-                      <span style={{ fontSize: '12px', color: '#374151', fontWeight: '500' }}>{c.city}</span>
-                    </div>
-                    <span style={{ fontSize: '12px', color: '#0012b5', fontWeight: '700' }}>{c.potholes}</span>
-                  </div>
-                  <div className="sev-bar-bg">
-                    <div className="sev-bar" style={{ width: `${c.percent}%`, background: '#0012b5' }} />
-                  </div>
-                </div>
-              ))}
+             // In the Top Cities by Potholes card find the cityData.map and update:
+{cityData.map((c, i) => (
+  <div key={c.city} style={{ marginBottom: '12px', cursor: 'pointer' }}
+    onClick={() => nav(`/city/${encodeURIComponent(c.city)}`)}>
+    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+        <span style={{
+          width: '18px', height: '18px', borderRadius: '5px',
+          background: '#eff6ff', color: '#0012b5',
+          fontSize: '10px', fontWeight: '700',
+          display: 'flex', alignItems: 'center', justifyContent: 'center'
+        }}>{i + 1}</span>
+        <span style={{ fontSize: '12px', color: '#0012b5', fontWeight: '500', textDecoration: 'underline' }}>{c.city}</span>
+      </div>
+      <span style={{ fontSize: '12px', color: '#0012b5', fontWeight: '700' }}>{c.potholes}</span>
+    </div>
+    <div className="sev-bar-bg">
+      <div className="sev-bar" style={{ width: `${c.percent}%`, background: '#0012b5' }} />
+    </div>
+  </div>
+))}
             </div>
           </div>
         </div>

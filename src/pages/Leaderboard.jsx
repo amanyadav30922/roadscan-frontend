@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { Trophy, MapPin, AlertTriangle, TrendingUp, Wrench, Award } from 'lucide-react'
 
@@ -12,6 +13,8 @@ const getRiskLevel = score => {
   if (score >= 6)  return { label: 'Medium',    color: '#d97706', bg: '#fffbeb', border: '#fde68a' }
   return              { label: 'Low',       color: '#16a34a', bg: '#f0fdf4', border: '#bbf7d0' }
 }
+
+ 
 
 export default function Leaderboard() {
   const [data,    setData]    = useState([])
@@ -41,6 +44,8 @@ export default function Leaderboard() {
   const rest    = data.slice(3)
   const total   = data.reduce((a, b) => a + b.total, 0)
   const repaired = data.reduce((a, b) => a + b.repaired, 0)
+
+  const nav = useNavigate()
 
   return (
     <div>
@@ -169,12 +174,23 @@ export default function Leaderboard() {
                                 }}>{i + 1}</span>}
                           </div>
                         </td>
-                        <td>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <MapPin size={12} color="#9ca3af" />
-                            <span style={{ fontWeight: '500', color: '#111827' }}>{city.city}</span>
-                          </div>
-                        </td>
+                    <td>
+  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+    <MapPin size={12} color="#9ca3af" />
+
+    <span
+      style={{
+        cursor: 'pointer',
+        color: '#0012b5',
+        textDecoration: 'underline',
+        fontWeight: '500'
+      }}
+      onClick={() => nav(`/city/${encodeURIComponent(city.city)}`)}
+    >
+      {city.city}
+    </span>
+  </div>
+</td>
                         <td>
                           <span style={{
                             fontSize: '13px', fontWeight: '700', color: risk.color,

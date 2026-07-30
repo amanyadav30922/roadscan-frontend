@@ -11,6 +11,7 @@ import Data from './pages/Data'
 import Report from './pages/Report'
 import Settings from './pages/Settings'
 import Leaderboard from './pages/Leaderboard'
+import CityDetail from './pages/CityDetail'
 import './App.css'
 
 function AppLayout() {
@@ -28,6 +29,7 @@ function AppLayout() {
             <Route path="/report"      element={<Report />} />
             <Route path="/settings"    element={<Settings />} />
             <Route path="/leaderboard" element={<Leaderboard />} />
+            <Route path="/city/:city" element={<CityDetail />} />
           </Routes>
         </div>
       </div>
